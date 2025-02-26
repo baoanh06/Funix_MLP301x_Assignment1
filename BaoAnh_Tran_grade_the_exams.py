@@ -24,6 +24,9 @@ def analyzeData(classExam):
         else:
             validExam += 1
 
+    if invalidExam == 0:
+        print("No errors found!")
+
     print("**** REPORT ****")
     print("Total valid lines of data: ", validExam)
     print("Total invalid lines of data: ", invalidExam)
@@ -31,10 +34,13 @@ def analyzeData(classExam):
 if __name__ == '__main__':
     filename = input("Enter a class file to grade (i.e. class1 for class1.txt): ")
 
-    try:
-        with open(filename+".txt", 'r') as file:
-            print("Successfully opened {}.txt", filename)
-            classData = file.readlines()
-            analyzeData(classData)
-    except FileNotFoundError:
-        print("File cannot be found.")
+    while filename != '-1':
+        try:
+            with open(filename+".txt", 'r') as file:
+                print("Successfully opened {}.txt".format(filename))
+                classData = file.readlines()
+                analyzeData(classData)
+        except FileNotFoundError:
+            print("File cannot be found.")
+        finally:
+            filename = input("Enter a class file to grade (i.e. class1 for class1.txt): ")
