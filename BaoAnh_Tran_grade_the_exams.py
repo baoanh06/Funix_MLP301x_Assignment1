@@ -1,5 +1,7 @@
+import pandas as pd
 import numpy as np
 import re
+
 
 # Kiểm tra dữ liệu
 def verify_data(class_exam):
@@ -31,8 +33,10 @@ def verify_data(class_exam):
 
     return num_valid_exam, num_invalid_exam, class_exam
 
+
 # Chấm bài
 def marking_grade(valid_exams):
+    global df_grade_list
     answer_key = "B,A,D,D,C,B,D,A,C,C,D,B,A,B,A,C,B,D,A,C,A,A,B,D,D"
     answer_list = answer_key.split(',')
 
@@ -59,8 +63,10 @@ def marking_grade(valid_exams):
         class_results.append(student_result)
         grade_list.append(score)
 
-    print(grade_list)
-    return class_results, grade_list
+        df_grade_list = pd.DataFrame(grade_list)
+
+    return class_results, df_grade_list
+
 
 # Báo cáo kết quả
 def report(num_valid_exam, num_invalid_exam, score_list):
@@ -73,11 +79,13 @@ def report(num_valid_exam, num_invalid_exam, score_list):
     print("Range of scores: ", np.max(score_list) - np.min(score_list))
     print("Median score: ", np.median(score_list))
 
+
 # Lưu kết quả vào file
-def output_file (filename, class_results):
+def output_file(filename, class_results):
     with open("Expected Output/" + filename + "_grades.txt", 'w') as file:
         file.writelines(class_results)
 
+# Chạy Chương trình
 if __name__ == '__main__':
     filename = input("Enter a class file to grade (i.e. class1 for class1.txt): ")
 
@@ -87,10 +95,10 @@ if __name__ == '__main__':
                 print("Successfully opened {}.txt".format(filename))
                 class_data = file.readlines()
 
-                num_valid_exam, num_invalid_exam, verified_class_exam = verify_data(class_data)
-                class_results, class_grade_list = marking_grade(verified_class_exam)
-                report(num_valid_exam, num_invalid_exam, class_grade_list)
-                output_file(filename, class_results)
+                valid_exam, invalid_exam, verified_class_exam = verify_data(class_data)
+                class_exam_results, class_grade_list = marking_grade(verified_class_exam)
+                report(valid_exam, invalid_exam, class_grade_list)
+                output_file(filename, class_exam_results)
         except FileNotFoundError:
             print("File cannot be found.")
         finally:
